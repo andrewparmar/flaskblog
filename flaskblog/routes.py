@@ -7,6 +7,7 @@ from flaskblog import app, api, db, bcrypt
 from flaskblog.models import User, Post
 from flaskblog.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm
 from flask_login import login_user, current_user, logout_user, login_required
+from flaskblog.tasks import add_together
 
 # from flaskblog.database import posts
 from flaskblog.resources.post import PostSimple
@@ -157,5 +158,13 @@ def user_post(username):
 			.order_by(Post.date_posted.desc())\
 			.paginate(page=page, per_page=5)
 	return render_template('user_posts.html', posts=posts, user=user)
+
+
+@app.route('/test/celery')
+def test_celery():
+	add_together.delay(32,532)
+	return 'Your task was sent'
+
+
 
 api.add_resource(PostSimple, '/api/v1/posts')
